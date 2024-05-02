@@ -56,10 +56,16 @@ button:hover{
 <body>
     <div class="container">
         <h1>URL Shortener</h1>
-         <label for="url">Enter URL of shorten:</label>
+         <label for="url">Enter URL to shorten:</label>
          <input type="text" id="url" placeholder="https://www.example.com/long-url">
          <button onclick="shortenURL()">Shorten</button>
          <div id="result"></div>
+
+        <h1>Original URL</h1>
+         <label for="url1">Enter shortened URL:</label>
+         <input type="text" id="url1" placeholder="https://www.exmpl.com/shrt-url">
+         <button onclick="ogURL()">Get Original</button>
+         <div id="ogresult"></div>
     </div>
 </body>
 <script>
@@ -71,9 +77,33 @@ button:hover{
         document.getElementById('result').innerHTML = `
         shortened URL: <a href="${data}" target="_blank">${data}</a>
         `;
+
+        document.getElementById('result').setAttribute('shortened-url', data);
+
         } else {
-            document.getElementById('result').innerHTML="Error Shortening URL";
+            document.getElementById('result').innerHTML="Invalid URL";
         }
     }
+
+    async function ogURL() {
+    const tinyUrl = document.getElementById("url1").value;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = proxyUrl + tinyUrl;
+    try {
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const originalUrl = response.url;
+            document.getElementById('ogresult').innerHTML = `
+            Original URL: <a href="${originalUrl}" target="_blank">${originalUrl}</a>
+            `;
+        } else {
+            document.getElementById('ogresult').innerHTML = "Invalid TinyURL";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('ogresult').innerHTML = "An error occurred";
+    }
+}
+
 </script>
 </html>
